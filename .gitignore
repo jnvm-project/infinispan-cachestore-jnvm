@@ -1,0 +1,4 @@
+# ignore Maven generated target folder
+target
+# ignore vim swap files
+.swp
