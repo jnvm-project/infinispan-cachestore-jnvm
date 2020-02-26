@@ -19,6 +19,11 @@
 
    <dependencies>
       <dependency>
+         <groupId>eu.telecomsudparis.jnvm</groupId>
+         <artifactId>jnvm</artifactId>
+         <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
          <groupId>org.kohsuke.metainf-services</groupId>
          <artifactId>metainf-services</artifactId>
          <version>${version.metainf}</version>
