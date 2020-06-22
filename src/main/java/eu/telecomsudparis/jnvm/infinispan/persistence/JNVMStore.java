@@ -13,7 +13,6 @@ import org.kohsuke.MetaInfServices;
 
 import eu.telecomsudparis.jnvm.infinispan.persistence.configuration.JNVMStoreConfiguration;
 import eu.telecomsudparis.jnvm.util.persistent.RecoverableStrongHashMap;
-import eu.telecomsudparis.jnvm.offheap.OffHeap;
 import eu.telecomsudparis.jnvm.offheap.OffHeapObject;
 
 @Store
@@ -21,7 +20,6 @@ import eu.telecomsudparis.jnvm.offheap.OffHeapObject;
 @ConfiguredBy(JNVMStoreConfiguration.class)
 public class JNVMStore<K extends OffHeapObject, V extends OffHeapObject> implements AdvancedLoadWriteStore<K, V> {
 
-    private static final long RMAP_OFFSET=16;
     private RecoverableStrongHashMap<K, V> backend = null;
 
     private InitializationContext ctx;
@@ -47,12 +45,8 @@ public class JNVMStore<K extends OffHeapObject, V extends OffHeapObject> impleme
 
     @Override
     public void start() {
-        //TODO Properly register the map as a root object
-        //     and auto-recover from previous offset on new
-        if(OffHeap.getAllocator().top() == 0) {
-            backend = new RecoverableStrongHashMap();
-        } else {
-            backend = new RecoverableStrongHashMap(OffHeap.baseAddr() + RMAP_OFFSET);
+        if (backend == null) {
+            backend = RecoverableStrongHashMap.recover( "JNVMStore", 40000000 );
         }
     }
 
