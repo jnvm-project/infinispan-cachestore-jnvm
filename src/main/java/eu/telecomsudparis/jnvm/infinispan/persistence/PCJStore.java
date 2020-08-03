@@ -69,8 +69,7 @@ public class PCJStore<K extends AnyPersistent,V extends AnyPersistent> implement
             KeyFilter<? super K> arg0,
             org.infinispan.persistence.spi.AdvancedCacheLoader.CacheLoaderTask<K, V> arg1,
             Executor arg2, boolean arg3, boolean arg4) {
-        // TODO Auto-generated method stub
-
+        throw new RuntimeException();
     }
 
     @Override
@@ -87,8 +86,7 @@ public class PCJStore<K extends AnyPersistent,V extends AnyPersistent> implement
     public void purge(
             Executor arg0,
             org.infinispan.persistence.spi.AdvancedCacheWriter.PurgeListener<? super K> arg1) {
-        // TODO Auto-generated method stub
-
+        throw new RuntimeException();
     }
 
 }
