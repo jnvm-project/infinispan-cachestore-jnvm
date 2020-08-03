@@ -2,10 +2,15 @@ package eu.telecomsudparis.jnvm.infinispan.persistence;
 
 import java.util.concurrent.Executor;
 
+import lib.util.persistent.AnyPersistent;
+import lib.util.persistent.ObjectDirectory;
+import lib.util.persistent.PersistentHashMap;
 import org.infinispan.commons.configuration.ConfiguredBy;
 import org.infinispan.commons.persistence.Store;
 import org.infinispan.filter.KeyFilter;
 import org.infinispan.marshall.core.MarshalledEntry;
+import org.infinispan.marshall.core.MarshalledEntryFactory;
+import org.infinispan.marshall.core.MarshalledEntryFactoryImpl;
 import org.infinispan.persistence.spi.AdvancedLoadWriteStore;
 import org.infinispan.persistence.spi.InitializationContext;
 import org.kohsuke.MetaInfServices;
@@ -15,48 +20,48 @@ import eu.telecomsudparis.jnvm.infinispan.persistence.configuration.JNVMStoreCon
 @Store
 @MetaInfServices
 @ConfiguredBy(JNVMStoreConfiguration.class)
-public class JNVMStore<K,V> implements AdvancedLoadWriteStore<K, V> {
+public class PCJStore<K extends AnyPersistent,V extends AnyPersistent> implements AdvancedLoadWriteStore<K, V> {
+
+    String DATA_KEY = "PCJStore";
+    PersistentHashMap<K, V> map = ObjectDirectory.get(DATA_KEY, PersistentHashMap.class);
+    MarshalledEntryFactory marshalledEntryFactory = new MarshalledEntryFactoryImpl();
 
     @Override
-    public boolean contains(Object o) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean contains(Object key) {
+        return map.containsKey(key);
     }
 
     @Override
     public void init(InitializationContext initializationContext) {
-        // TODO Auto-generated method stub
-
+        // empty
     }
 
     @Override
-    public MarshalledEntry<K, V> load(Object o) {
-        // TODO Auto-generated method stub
-        return null;
+    public MarshalledEntry<K, V> load(Object key) {
+        return marshalledEntryFactory.newMarshalledEntry(key, map.get(key), null);
     }
 
     @Override
     public void start() {
-        // TODO Auto-generated method stub
-
+        // empty
     }
 
     @Override
     public void stop() {
-        // TODO Auto-generated method stub
+        // empty
 
     }
 
     @Override
     public boolean delete(Object o) {
-        // TODO Auto-generated method stub
+        if (map.remove(o) != null)
+            return true;
         return false;
     }
 
     @Override
     public void write(MarshalledEntry<? extends K, ? extends V> marshalledEntry) {
-        // TODO Auto-generated method stub
-
+        map.put(marshalledEntry.getKey(), marshalledEntry.getValue());
     }
 
     @Override
@@ -70,14 +75,12 @@ public class JNVMStore<K,V> implements AdvancedLoadWriteStore<K, V> {
 
     @Override
     public int size() {
-        // TODO Auto-generated method stub
-        return 0;
+        return map.size();
     }
 
     @Override
     public void clear() {
-        // TODO Auto-generated method stub
-
+        map.entrySet().clear();
     }
 
     @Override

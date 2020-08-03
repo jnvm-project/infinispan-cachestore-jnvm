@@ -8,10 +8,10 @@ import org.infinispan.configuration.cache.AbstractStoreConfiguration;
 import org.infinispan.configuration.cache.AsyncStoreConfiguration;
 import org.infinispan.configuration.cache.SingletonStoreConfiguration;
 
-import eu.telecomsudparis.jnvm.infinispan.persistence.JNVMStore;
+import eu.telecomsudparis.jnvm.infinispan.persistence.PCJStore;
 
 @BuiltBy(JNVMStoreConfigurationBuilder.class)
-@ConfigurationFor(JNVMStore.class)
+@ConfigurationFor(PCJStore.class)
 public class JNVMStoreConfiguration extends AbstractStoreConfiguration {
 
     static final AttributeDefinition<String> SAMPLE_ATTRIBUTE = AttributeDefinition.builder("sampleAttribute", null, String.class).immutable().build();

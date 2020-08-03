@@ -14,6 +14,7 @@
       -->
       <version.infinispan>9.0.1.Final</version.infinispan>
       <version.metainf>1.7</version.metainf>
+      <version.pcj>1.0</version.pcj>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
    </properties>
 
@@ -27,6 +28,11 @@
          <groupId>org.infinispan</groupId>
          <artifactId>infinispan-embedded</artifactId>
          <version>${version.infinispan}</version>
+      </dependency>
+      <dependency>
+         <groupId>com.intel</groupId>
+         <artifactId>pcj</artifactId>
+         <version>${version.pcj}</version>
       </dependency>
    </dependencies>
 
