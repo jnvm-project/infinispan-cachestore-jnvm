@@ -6,57 +6,63 @@ import org.infinispan.commons.configuration.ConfiguredBy;
 import org.infinispan.commons.persistence.Store;
 import org.infinispan.filter.KeyFilter;
 import org.infinispan.marshall.core.MarshalledEntry;
+import org.infinispan.marshall.core.MarshalledEntryFactory;
 import org.infinispan.persistence.spi.AdvancedLoadWriteStore;
 import org.infinispan.persistence.spi.InitializationContext;
 import org.kohsuke.MetaInfServices;
 
 import eu.telecomsudparis.jnvm.infinispan.persistence.configuration.JNVMStoreConfiguration;
+import eu.telecomsudparis.jnvm.util.persistent.RecoverableStrongHashMap;
+import eu.telecomsudparis.jnvm.offheap.OffHeapObject;
 
 @Store
 @MetaInfServices
 @ConfiguredBy(JNVMStoreConfiguration.class)
-public class JNVMStore<K,V> implements AdvancedLoadWriteStore<K, V> {
+public class JNVMStore<K extends OffHeapObject, V extends OffHeapObject> implements AdvancedLoadWriteStore<K, V> {
+
+    private RecoverableStrongHashMap<K, V> backend = null;
+
+    private InitializationContext ctx;
+    private MarshalledEntryFactory marshalledEntryFactory;
+    private JNVMStoreConfiguration configuration;
 
     @Override
     public boolean contains(Object o) {
-        // TODO Auto-generated method stub
-        return false;
+        return backend.containsKey(o);
     }
 
     @Override
     public void init(InitializationContext initializationContext) {
-        // TODO Auto-generated method stub
-
+        ctx = initializationContext;
+        marshalledEntryFactory = ctx.getMarshalledEntryFactory();
+        configuration = ctx.getConfiguration();
     }
 
     @Override
     public MarshalledEntry<K, V> load(Object o) {
-        // TODO Auto-generated method stub
-        return null;
+        return marshalledEntryFactory.newMarshalledEntry(o, backend.get(o), null);
     }
 
     @Override
     public void start() {
-        // TODO Auto-generated method stub
-
+        if (backend == null) {
+            backend = RecoverableStrongHashMap.recover( ctx.getCache().getName(), 40000000 );
+        }
     }
 
     @Override
     public void stop() {
-        // TODO Auto-generated method stub
-
+        backend = null;
     }
 
     @Override
     public boolean delete(Object o) {
-        // TODO Auto-generated method stub
-        return false;
+        return backend.remove(o) != null;
     }
 
     @Override
     public void write(MarshalledEntry<? extends K, ? extends V> marshalledEntry) {
-        // TODO Auto-generated method stub
-
+        backend.put(marshalledEntry.getKey(), marshalledEntry.getValue());
     }
 
     @Override
@@ -70,14 +76,12 @@ public class JNVMStore<K,V> implements AdvancedLoadWriteStore<K, V> {
 
     @Override
     public int size() {
-        // TODO Auto-generated method stub
-        return 0;
+        return backend.size();
     }
 
     @Override
     public void clear() {
-        // TODO Auto-generated method stub
-
+        backend.clear();
     }
 
     @Override
