@@ -1,11 +1,13 @@
 package eu.telecomsudparis.jnvm.infinispan.persistence.configuration;
+
 import java.util.HashMap;
 import java.util.Map;
 
+
 public enum Element {
     // must be first
-    UNKNOWN(null)
-    ;
+    UNKNOWN(null),
+    JNVM_STORE(JNVMStoreConfigurationParser.ROOT_ELEMENT);
 
     private final String name;
 
@@ -39,4 +41,10 @@ public enum Element {
         final Element element = MAP.get(localName);
         return element == null ? UNKNOWN : element;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
 }
