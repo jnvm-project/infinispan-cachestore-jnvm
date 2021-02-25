@@ -10,6 +10,7 @@ import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.parsing.ConfigurationBuilderHolder;
 import org.infinispan.configuration.parsing.ConfigurationParser;
 import org.infinispan.configuration.parsing.Namespace;
+import org.infinispan.configuration.parsing.ParseUtils;
 import org.infinispan.configuration.parsing.Parser;
 import org.infinispan.configuration.parsing.ParseUtils;
 import org.infinispan.configuration.parsing.XMLExtendedStreamReader;
@@ -53,6 +54,8 @@ public class JNVMStoreConfigurationParser implements ConfigurationParser {
     }
 
     private void parseJNVMStore(XMLExtendedStreamReader reader, JNVMStoreConfigurationBuilder builder) throws XMLStreamException {
+        String path = null;
+        String relativeTo = null;
         for (int i=0; i < reader.getAttributeCount(); i++) {
             ParseUtils.requireNoNamespaceAttribute(reader, i);
             String value = reader.getAttributeValue(i);
@@ -60,11 +63,32 @@ public class JNVMStoreConfigurationParser implements ConfigurationParser {
             Attribute attribute = Attribute.forName(attrName);
 
             switch (attribute) {
+            /*
+                case RELATIVE_TO:
+                    relativeTo = ParseUtils.requireAttributeProperty(reader, i);
+                    break;
+                case PATH:
+                    path = value;
+                    break;
+                case MAX_FILE_SIZE:
+                    builder.maxFileSize(Long.parseLong(value));
+                    break;
+            */
+                case MAX_ENTRIES:
+                    builder.maxEntries(Integer.parseInt(value));
+                    break;
                 default:
                     Parser.parseStoreAttribute(reader, i, builder);
                     break;
             }
         }
+        //ParseUtils.requireNoContent(reader);
+        /*
+        path = ParseUtils.resolvePath(path, relativeTo);
+        if (path != null) {
+            builder.location(path);
+        }
+        */
         while (reader.hasNext() && (reader.nextTag() != XMLStreamConstants.END_ELEMENT)) {
             Element element = Element.forName(reader.getLocalName());
             switch (element) {

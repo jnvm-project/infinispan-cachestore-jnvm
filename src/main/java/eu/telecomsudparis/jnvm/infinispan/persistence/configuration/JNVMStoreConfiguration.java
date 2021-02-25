@@ -5,6 +5,7 @@ import static eu.telecomsudparis.jnvm.infinispan.persistence.configuration.Eleme
 import org.infinispan.commons.configuration.BuiltBy;
 import org.infinispan.commons.configuration.ConfigurationFor;
 import org.infinispan.commons.configuration.ConfigurationInfo;
+import org.infinispan.commons.configuration.attributes.Attribute;
 import org.infinispan.commons.configuration.attributes.AttributeDefinition;
 import org.infinispan.commons.configuration.attributes.AttributeSet;
 import org.infinispan.commons.configuration.elements.DefaultElementDefinition;
@@ -25,16 +26,25 @@ import eu.telecomsudparis.jnvm.infinispan.persistence.JNVMStore;
 @SerializedWith(JNVMStoreSerializer.class)
 public class JNVMStoreConfiguration extends AbstractSegmentedStoreConfiguration<JNVMStoreConfiguration> implements ConfigurationInfo {
 
-    static final AttributeDefinition<String> SAMPLE_ATTRIBUTE = AttributeDefinition.builder("sampleAttribute", null, String.class).immutable().build();
+    //public static final AttributeDefinition<String> LOCATION = AttributeDefinition.builder("location", null, String.class).immutable().autoPersist(false).xmlName("path").build();
+    //public static final AttributeDefinition<Long> MAX_FILE_SIZE = AttributeDefinition.builder("maxFileSize", 1024 *1024*1024L).immutable().autoPersist(false).build();
+    public static final AttributeDefinition<Integer> MAX_ENTRIES = AttributeDefinition.builder("maxEntries", 20_000_000).immutable().autoPersist(false).build();
 
     public static AttributeSet attributeDefinitionSet() {
-        return new AttributeSet(JNVMStoreConfiguration.class, AbstractStoreConfiguration.attributeDefinitionSet(), SAMPLE_ATTRIBUTE);
+        return new AttributeSet(JNVMStoreConfiguration.class, AbstractStoreConfiguration.attributeDefinitionSet(), MAX_ENTRIES); //LOCATION, MAX_FILE_SIZE, MAX_ENTRIES);
     }
 
     public static ElementDefinition ELEMENT_DEFINITION = new DefaultElementDefinition(JNVM_STORE.getLocalName(), true, false);
 
+    //private final Attribute<String> location;
+    //private final Attribute<Long> maxFileSize;
+    private final Attribute<Integer> maxEntries;
+
     public JNVMStoreConfiguration(AttributeSet attributes, AsyncStoreConfiguration async) {
         super(attributes, async);
+        //location = attributes.attribute(LOCATION);
+        //maxFileSize = attributes.attribute(MAX_FILE_SIZE);
+        maxEntries = attributes.attribute(MAX_ENTRIES);
     }
 
     @Override
@@ -52,6 +62,20 @@ public class JNVMStoreConfiguration extends AbstractSegmentedStoreConfiguration<
         AttributeSet set = JNVMStoreConfiguration.attributeDefinitionSet();
         set.read(attributes);
         return new JNVMStoreConfiguration(set.protect(), async());
+    }
+
+    /*
+    public string location() {
+        return location.get();
+    }
+
+    public long maxFileSize() {
+        return maxFileSize.get();
+    }
+    */
+
+    public int maxEntries() {
+        return maxEntries.get();
     }
 
     @Override
