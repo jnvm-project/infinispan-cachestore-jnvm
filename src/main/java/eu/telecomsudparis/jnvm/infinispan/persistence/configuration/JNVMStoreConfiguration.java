@@ -6,7 +6,6 @@ import org.infinispan.commons.configuration.attributes.AttributeDefinition;
 import org.infinispan.commons.configuration.attributes.AttributeSet;
 import org.infinispan.configuration.cache.AbstractStoreConfiguration;
 import org.infinispan.configuration.cache.AsyncStoreConfiguration;
-import org.infinispan.configuration.cache.SingletonStoreConfiguration;
 
 import eu.telecomsudparis.jnvm.infinispan.persistence.JNVMStore;
 
@@ -20,8 +19,8 @@ public class JNVMStoreConfiguration extends AbstractStoreConfiguration {
         return new AttributeSet(JNVMStoreConfiguration.class, AbstractStoreConfiguration.attributeDefinitionSet(), SAMPLE_ATTRIBUTE);
     }
 
-    public JNVMStoreConfiguration(AttributeSet attributes, AsyncStoreConfiguration async, SingletonStoreConfiguration singletonStore) {
-        super(attributes, async, singletonStore);
+    public JNVMStoreConfiguration(AttributeSet attributes, AsyncStoreConfiguration async) {
+        super(attributes, async);
         // TODO Auto-generated constructor stub
     }
 }

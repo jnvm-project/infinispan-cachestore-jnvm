@@ -22,7 +22,7 @@ public class JNVMStoreConfigurationBuilder extends AbstractStoreConfigurationBui
     @Override
     public JNVMStoreConfiguration create() {
         // TODO Auto-generated method stub
-        return new JNVMStoreConfiguration(attributes.protect(), async.create(), singletonStore.create());
+        return new JNVMStoreConfiguration(attributes.protect(), async.create());
     }
 
     @Override
