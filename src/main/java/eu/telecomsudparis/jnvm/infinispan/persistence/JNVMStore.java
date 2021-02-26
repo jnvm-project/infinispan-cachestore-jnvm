@@ -4,12 +4,13 @@ import java.util.concurrent.Executor;
 
 import org.infinispan.commons.configuration.ConfiguredBy;
 import org.infinispan.commons.persistence.Store;
-import org.infinispan.filter.KeyFilter;
-import org.infinispan.marshall.core.MarshalledEntry;
-import org.infinispan.marshall.core.MarshalledEntryFactory;
+import org.infinispan.persistence.spi.MarshallableEntry;
+import org.infinispan.persistence.spi.MarshallableEntryFactory;
 import org.infinispan.persistence.spi.AdvancedLoadWriteStore;
 import org.infinispan.persistence.spi.InitializationContext;
 import org.kohsuke.MetaInfServices;
+import java.util.function.Predicate;
+import org.reactivestreams.Publisher;
 
 import eu.telecomsudparis.jnvm.infinispan.persistence.configuration.JNVMStoreConfiguration;
 import eu.telecomsudparis.jnvm.util.persistent.RecoverableStrongHashMap;
@@ -23,7 +24,7 @@ public class JNVMStore<K extends OffHeapObject, V extends OffHeapObject> impleme
     private RecoverableStrongHashMap<K, V> backend = null;
 
     private InitializationContext ctx;
-    private MarshalledEntryFactory marshalledEntryFactory;
+    private MarshallableEntryFactory entryFactory;
     private JNVMStoreConfiguration configuration;
 
     @Override
@@ -34,13 +35,13 @@ public class JNVMStore<K extends OffHeapObject, V extends OffHeapObject> impleme
     @Override
     public void init(InitializationContext initializationContext) {
         ctx = initializationContext;
-        marshalledEntryFactory = ctx.getMarshalledEntryFactory();
+        entryFactory = ctx.getMarshallableEntryFactory();
         configuration = ctx.getConfiguration();
     }
 
     @Override
-    public MarshalledEntry<K, V> load(Object o) {
-        return marshalledEntryFactory.newMarshalledEntry(o, backend.get(o), null);
+    public MarshallableEntry<K, V> loadEntry(Object o) {
+        return entryFactory.create(o, backend.get(o));
     }
 
     @Override
@@ -61,17 +62,8 @@ public class JNVMStore<K extends OffHeapObject, V extends OffHeapObject> impleme
     }
 
     @Override
-    public void write(MarshalledEntry<? extends K, ? extends V> marshalledEntry) {
-        backend.put(marshalledEntry.getKey(), marshalledEntry.getValue());
-    }
-
-    @Override
-    public void process(
-            KeyFilter<? super K> arg0,
-            org.infinispan.persistence.spi.AdvancedCacheLoader.CacheLoaderTask<K, V> arg1,
-            Executor arg2, boolean arg3, boolean arg4) {
-        // TODO Auto-generated method stub
-
+    public void write(MarshallableEntry<? extends K, ? extends V> marshallableEntry) {
+        backend.put(marshallableEntry.getKey(), marshallableEntry.getValue());
     }
 
     @Override
@@ -90,6 +82,13 @@ public class JNVMStore<K extends OffHeapObject, V extends OffHeapObject> impleme
             org.infinispan.persistence.spi.AdvancedCacheWriter.PurgeListener<? super K> arg1) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public Publisher<MarshallableEntry<K, V>> entryPublisher(Predicate<? super K> filter,
+                                                             boolean fetchValue,
+                                                             boolean fetchMetadata) {
+        throw new UnsupportedOperationException("entryPublisher");
     }
 
 }
