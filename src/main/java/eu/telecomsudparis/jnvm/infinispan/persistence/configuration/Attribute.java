@@ -1,11 +1,17 @@
 package eu.telecomsudparis.jnvm.infinispan.persistence.configuration;
+
 import java.util.HashMap;
 import java.util.Map;
+
 
 public enum Attribute {
 
     // must be first
-    UNKNOWN(null);
+    UNKNOWN(null),
+    //PATH("path"),
+    //RELATIVE_TO("relative-to"),
+    //MAX_FILE_SIZE("max-file-size"),
+    MAX_ENTRIES("max-entries");
 
     // Other enums to be placed here
 

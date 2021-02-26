@@ -47,7 +47,7 @@ public class JNVMStore<K extends OffHeapObject, V extends OffHeapObject> impleme
     @Override
     public void start() {
         if (backend == null) {
-            backend = RecoverableStrongHashMap.recover( ctx.getCache().getName(), 40000000 );
+            backend = RecoverableStrongHashMap.recover( ctx.getCache().getName(), configuration.maxEntries() );
         }
     }
 
