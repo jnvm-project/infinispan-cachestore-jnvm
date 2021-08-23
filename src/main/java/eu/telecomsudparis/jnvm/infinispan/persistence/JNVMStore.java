@@ -12,6 +12,8 @@ import org.infinispan.persistence.spi.InitializationContext;
 import org.kohsuke.MetaInfServices;
 
 import eu.telecomsudparis.jnvm.infinispan.persistence.configuration.JNVMStoreConfiguration;
+import eu.telecomsudparis.jnvm.util.persistent.RecoverableMap;
+import eu.telecomsudparis.jnvm.util.persistent.RecoverableHashMap;
 import eu.telecomsudparis.jnvm.util.persistent.RecoverableStrongHashMap;
 import eu.telecomsudparis.jnvm.offheap.OffHeapObject;
 
@@ -20,7 +22,7 @@ import eu.telecomsudparis.jnvm.offheap.OffHeapObject;
 @ConfiguredBy(JNVMStoreConfiguration.class)
 public class JNVMStore<K extends OffHeapObject, V extends OffHeapObject> implements AdvancedLoadWriteStore<K, V> {
 
-    private RecoverableStrongHashMap<K, V> backend = null;
+    private RecoverableMap<K, V> backend = null;
 
     private InitializationContext ctx;
     private MarshalledEntryFactory marshalledEntryFactory;
@@ -46,7 +48,9 @@ public class JNVMStore<K extends OffHeapObject, V extends OffHeapObject> impleme
     @Override
     public void start() {
         if (backend == null) {
-            backend = RecoverableStrongHashMap.recover( ctx.getCache().getName(), 40000000 );
+            backend = RecoverableStrongHashMap.recover( ctx.getCache().getName(), 10000000 );
+            //backend = RecoverableHashMap.recover( ctx.getCache().getName(), 40000000 );
+            //backend = RecoverableStrongHashMap.recover( ctx.getCache().getName(), 40000000 );
         }
     }
 
