@@ -48,4 +48,9 @@ public enum Attribute {
         return attribute == null ? UNKNOWN : attribute;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
 }

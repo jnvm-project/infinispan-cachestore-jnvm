@@ -26,9 +26,9 @@ import eu.telecomsudparis.jnvm.infinispan.persistence.JNVMStore;
 @SerializedWith(JNVMStoreSerializer.class)
 public class JNVMStoreConfiguration extends AbstractSegmentedStoreConfiguration<JNVMStoreConfiguration> implements ConfigurationInfo {
 
-    //public static final AttributeDefinition<String> LOCATION = AttributeDefinition.builder("location", null, String.class).immutable().autoPersist(false).xmlName("path").build();
-    //public static final AttributeDefinition<Long> MAX_FILE_SIZE = AttributeDefinition.builder("maxFileSize", 1024 *1024*1024L).immutable().autoPersist(false).build();
-    public static final AttributeDefinition<Integer> MAX_ENTRIES = AttributeDefinition.builder("maxEntries", 20_000_000).immutable().autoPersist(false).build();
+    //public static final AttributeDefinition<String> LOCATION = AttributeDefinition.builder(eu.telecomsudparis.jnvm.infinispan.persistence.configuration.Attribute.PATH, null, String.class).immutable().autoPersist(false).xmlName("path").build();
+    //public static final AttributeDefinition<Long> MAX_FILE_SIZE = AttributeDefinition.builder(eu.telecomsudparis.jnvm.infinispan.persistence.configuration.Attribute.MAX_FILE_SIZE, 1024 *1024*1024L).immutable().autoPersist(false).build();
+    public static final AttributeDefinition<Integer> MAX_ENTRIES = AttributeDefinition.builder(eu.telecomsudparis.jnvm.infinispan.persistence.configuration.Attribute.MAX_ENTRIES, 20_000_000).immutable().build();
 
     public static AttributeSet attributeDefinitionSet() {
         return new AttributeSet(JNVMStoreConfiguration.class, AbstractStoreConfiguration.attributeDefinitionSet(), MAX_ENTRIES); //LOCATION, MAX_FILE_SIZE, MAX_ENTRIES);
