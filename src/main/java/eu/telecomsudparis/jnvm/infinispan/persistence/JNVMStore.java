@@ -1,5 +1,6 @@
 package eu.telecomsudparis.jnvm.infinispan.persistence;
 
+import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import org.infinispan.commons.configuration.ConfiguredBy;
@@ -11,6 +12,7 @@ import org.infinispan.persistence.spi.InitializationContext;
 import org.kohsuke.MetaInfServices;
 import java.util.function.Predicate;
 import org.reactivestreams.Publisher;
+import io.reactivex.rxjava3.core.Flowable;
 
 import eu.telecomsudparis.jnvm.infinispan.persistence.configuration.JNVMStoreConfiguration;
 import eu.telecomsudparis.jnvm.util.persistent.RecoverableStrongHashMap;
@@ -88,7 +90,11 @@ public class JNVMStore<K extends OffHeapObject, V extends OffHeapObject> impleme
     public Publisher<MarshallableEntry<K, V>> entryPublisher(Predicate<? super K> filter,
                                                              boolean fetchValue,
                                                              boolean fetchMetadata) {
-        throw new UnsupportedOperationException("entryPublisher");
+        return Flowable.fromIterable(backend.keySet())
+                .filter( k -> Objects.isNull(filter) || filter.test(k) )
+                .map( k -> (fetchValue) ?
+                        entryFactory.create( k, backend.get( k ) )
+                        : entryFactory.create( k ));
     }
 
 }
